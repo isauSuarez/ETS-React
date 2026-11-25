@@ -1,0 +1,41 @@
+1 Revisar versiones dentro de backendexpress (Terminal Command prompt)
+    node -v
+    npm -v
+    Mientras de version ya chingo
+
+2 Crear el package.json 
+    npm init -y
+
+3 Instalar dependencias y no emocionales cawn
+    npm install express mysql2 cors dotenv
+    Esto debe crear el archivo package-lock.json
+
+4 Meter el nodemon
+    npm install -D nodemon
+    Debe aparecer la carpeta de node_modules
+
+5 Confirgurar el servicio
+    En package.json colocar:
+
+    "start": "node ./bin/www",
+
+    "scripts": {
+    },
+
+6 Crear archivo app.js
+
+7 Para que jale el app.js necesitamos esta otra dependencia
+    npm install express http-errors cookie-parser morgan cors
+
+8 Dentro de la carpeta backendexpress 
+    New folder(bin) > New file (www)  
+    El archivo www sin terminacion, se detecta en automatico
+
+8.5 New folder(routes) > New file (index.js) 
+
+9 Calar el servicio, levantar desde terminal
+    npm start 
+    Calar en postman
+    http://localhost:3000/api/
+
+10 Instalar el 

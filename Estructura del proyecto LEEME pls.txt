@@ -1,0 +1,5 @@
+Dentro de la carpeta ETS-AWOS encontraras la carpeta API y la carpeta portal-cliente, son el equivalente API=backend, portal-cliente = frontend del lado de los clientes
+
+se llaman asi porque en la entrega en el portal de CCD pide eso, es para ubicarlo 
+
+Puedes jalar las carpetas API y portal-cliente por separado en visual si quieres dos ventanas, o directamente ets awos para no complicarte, igual podrías jalar todo el proyecto pero son un chingo de carpetas y algunas son meramente de consulta. 

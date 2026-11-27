@@ -1,91 +1,124 @@
 import { useEffect, useState } from 'react';
-import type { FormEvent } from 'react';
-import axios from 'axios';
+import type { FormEvent, ReactNode } from 'react';
+import RegistroCliente from './RegistroCliente';
+import PanelCliente from './PanelCliente';
+import MarcaETS from './MarcaETS';
+import { apiCliente, mensajeApi } from './clienteApi';
+import type { Plan } from './clienteApi';
 
 interface Cliente {
   idCliente: number;
   nombres: string;
 }
 
-const urlClientes = 'http://localhost:3000/api/clientes';
-const opciones = { withCredentials: true };
-
-function SesionCliente() {
+function SesionCliente({ children, planes }: { children: ReactNode; planes: Plan[] }) {
   const [cliente, setCliente] = useState<Cliente | null>(null);
+  const [revisando, setRevisando] = useState(true);
+  const [entrando, setEntrando] = useState(false);
+  const [registro, setRegistro] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    axios.get<{ cliente: Cliente }>(`${urlClientes}/sesion`, opciones)
+    apiCliente.get<{ cliente: Cliente }>('/clientes/sesion')
       .then(({ data }) => setCliente(data.cliente))
       .catch((error) => {
-        if (error.response?.status !== 401) {
-          setError('No se pudo consultar la sesión.');
-        }
-      });
+        if (error.response?.status !== 401) setError('No se pudo consultar la sesión.');
+      })
+      .finally(() => setRevisando(false));
   }, []);
 
   async function iniciarSesion(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
     const datos = Object.fromEntries(new FormData(evento.currentTarget));
     setError('');
+    setEntrando(true);
 
     try {
-      const { data } = await axios.post<{ cliente: Cliente }>(
-        `${urlClientes}/iniciosesion`, datos, opciones
-      );
+      const { data } = await apiCliente.post<{ cliente: Cliente }>('/clientes/iniciosesion', datos);
       setCliente(data.cliente);
+      window.scrollTo(0, 0);
     } catch (error) {
-      if (axios.isAxiosError<{ mensaje: string }>(error)) {
-        setError(error.response?.data.mensaje ?? 'No se pudo conectar con la API.');
-      } else {
-        setError('No se pudo iniciar sesión.');
-      }
+      setError(mensajeApi(error, 'No se pudo conectar con la API.'));
+    } finally {
+      setEntrando(false);
     }
   }
 
   async function cerrarSesion() {
     setError('');
-
     try {
-      await axios.post(`${urlClientes}/cerrarsesion`, {}, opciones);
+      await apiCliente.post('/clientes/cerrarsesion', {});
       setCliente(null);
-    } catch {
-      setError('No se pudo cerrar la sesión.');
+      setRegistro(false);
+      window.scrollTo(0, 0);
+    } catch (error) {
+      setError(mensajeApi(error, 'No se pudo cerrar la sesión.'));
     }
   }
 
-  return (
-    <section className="mt-5">
-      {cliente ? (
-        <>
-          <h2>Hola, {cliente.nombres}</h2>
-          <button className="btn btn-outline-secondary" onClick={cerrarSesion}>
-            Cerrar sesión
-          </button>
-        </>
-      ) : (
-        <>
-          <h2>Iniciar sesión</h2>
-          <form className="row g-3" onSubmit={iniciarSesion}>
-            <div className="col-md-6">
-              <label className="form-label" htmlFor="correoLogin">Correo</label>
-              <input id="correoLogin" name="correo" type="email"
-                className="form-control" autoComplete="username" required />
-            </div>
-            <div className="col-md-6">
-              <label className="form-label" htmlFor="passwordLogin">Contraseña</label>
-              <input id="passwordLogin" name="password" type="password"
-                className="form-control" autoComplete="current-password" required />
-            </div>
-            <div className="col-12">
-              <button className="btn btn-primary" type="submit">Entrar</button>
-            </div>
-          </form>
-        </>
-      )}
+  if (cliente) {
+    return <PanelCliente nombre={cliente.nombres} planes={planes} errorSesion={error}
+      onSalir={cerrarSesion} onNombre={(nombres) => setCliente({ ...cliente, nombres })} />;
+  }
 
-      {error && <p className="alert alert-danger mt-3" role="alert">{error}</p>}
-    </section>
+  return (
+    <>
+      <header className="ets-header">
+        <div className="container ets-nav">
+          <MarcaETS />
+          <a className="ets-nav-link" href="#planes">Ver planes</a>
+        </div>
+      </header>
+      <main>
+        <div className="container pt-4 pt-lg-5">
+          <div className="row g-3 g-lg-4 align-items-stretch">
+            <div className="col-lg-7">
+              <section className="ets-acceso-hero h-100 d-flex flex-column justify-content-between">
+                <div>
+                  <h1>Tu soporte técnico,<br className="d-none d-xl-inline" /> en un solo lugar.</h1>
+                  <p>Solicita una póliza para tu negocio y da seguimiento a cada servicio desde tu cuenta.</p>
+                </div>
+                <div className="ets-servicios d-flex flex-wrap gap-2">
+                  <span><i className="bi bi-chat-dots" aria-hidden="true" /> Consultas</span>
+                  <span><i className="bi bi-display" aria-hidden="true" /> Soporte remoto</span>
+                  <span><i className="bi bi-tools" aria-hidden="true" /> Visitas presenciales</span>
+                </div>
+              </section>
+            </div>
+            <div className="col-lg-5">
+              <section className="ets-card ets-acceso h-100" aria-label="Acceso al portal">
+                <div className="ets-switch" aria-label="Opciones de acceso">
+                  <button type="button" aria-pressed={!registro} onClick={() => { setRegistro(false); setError(''); }}>Iniciar sesión</button>
+                  <button type="button" aria-pressed={registro} onClick={() => { setRegistro(true); setError(''); }}>Crear cuenta</button>
+                </div>
+                {registro ? <RegistroCliente /> : (
+                  <>
+                    <h2 className="h4 mt-4 mb-3">Entra a tu cuenta</h2>
+                    {error && <p className="alert alert-danger" role="alert">{error}</p>}
+                    <form onSubmit={iniciarSesion} className="vstack gap-3">
+                      <div>
+                        <label className="form-label" htmlFor="correoLogin">Correo</label>
+                        <input id="correoLogin" name="correo" type="email" className="form-control"
+                          autoComplete="username" required />
+                      </div>
+                      <div>
+                        <label className="form-label" htmlFor="passwordLogin">Contraseña</label>
+                        <input id="passwordLogin" name="password" type="password" className="form-control"
+                          autoComplete="current-password" required />
+                      </div>
+                      <button className="btn btn-success" type="submit" disabled={revisando || entrando}>
+                        {entrando ? 'Entrando…' : 'Entrar al portal'}
+                      </button>
+                    </form>
+                  </>
+                )}
+              </section>
+            </div>
+          </div>
+        </div>
+        {children}
+      </main>
+    </>
   );
 }
 

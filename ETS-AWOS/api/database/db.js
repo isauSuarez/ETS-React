@@ -1,8 +1,8 @@
 const mysql = require('mysql2/promise');
 
-//Aqui va la base de datos cawn, al rato la cambiamos al vpn cawn
+// la base de todos esta con el isau, entra por tailscale cawn
 const pool = mysql.createPool({
-  host: 'localhost',
+  host: '100.110.225.71',
   user: 'root',
   password: '',
   database: 'soporte_modular_2026',

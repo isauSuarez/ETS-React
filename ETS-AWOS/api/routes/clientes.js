@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const db = require('../database/db');
 const jwt = require('jsonwebtoken');
 const claveJwt = require('../config/jwt.local');
+const autentificaCliente = require('../middleware/autentificaCliente');
 
 //Este es el endpoint del retgistro de clientes, con validaciones y hash de contraseña cawn
 router.post('/registro', [
@@ -102,23 +103,56 @@ router.post('/iniciosesion', async (req, res) => {
   }
 });
 
-router.get('/sesion', (req, res) => {
-  res.set('Cache-Control', 'no-store');
-
+router.get('/sesion', autentificaCliente, async (req, res) => {
   try {
-    const token = jwt.verify(req.cookies.tokenCliente, claveJwt, {
-      algorithms: ['HS256']
-    });
+    const [filas] = await db.query('SELECT idCliente, nombres FROM cliente WHERE idCliente = ?',
+      [req.cliente.idCliente]);
+    if (!filas[0]) return res.status(401).json({ mensaje: 'Inicia sesión como cliente.' });
+    res.json({ cliente: filas[0] });
+  } catch (error) {
+    console.error('Error al consultar sesión:', error.code);
+    res.status(500).json({ mensaje: 'No se pudo consultar la sesión.' });
+  }
+});
 
-    if (token.tipo !== 'cliente') {
-      return res.status(401).json({ mensaje: 'Inicia sesión como cliente.' });
-    }
+router.get('/perfil', autentificaCliente, async (req, res) => {
+  try {
+    const [filas] = await db.query(
+      'SELECT nombres, apellidos, correo, telefono FROM cliente WHERE idCliente = ?',
+      [req.cliente.idCliente]
+    );
+    if (!filas[0]) return res.status(404).json({ mensaje: 'No se encontró tu perfil.' });
+    res.json(filas[0]);
+  } catch (error) {
+    console.error('Error al consultar perfil:', error.code);
+    res.status(500).json({ mensaje: 'No se pudo cargar tu perfil.' });
+  }
+});
 
-    res.json({
-      cliente: { idCliente: token.idCliente, nombres: token.nombres }
-    });
-  } catch {
-    res.status(401).json({ mensaje: 'Inicia sesión como cliente.' });
+router.patch('/perfil', autentificaCliente, [
+  body('nombres', 'Escribe un nombre de hasta 80 caracteres.')
+    .isString().bail().trim().isLength({ min: 1, max: 80 }),
+  body('apellidos', 'Escribe apellidos de hasta 100 caracteres.')
+    .isString().bail().trim().isLength({ min: 1, max: 100 }),
+  body('telefono', 'Escribe un teléfono de 7 a 20 caracteres.')
+    .isString().bail().trim().isLength({ min: 7, max: 20 })
+], async (req, res) => {
+  if (!req.is('application/json')) return res.status(415).json({ mensaje: 'Envía los datos en JSON.' });
+
+  const errores = validationResult(req);
+  if (!errores.isEmpty()) return res.status(400).json({ mensaje: errores.array()[0].msg });
+
+  const { nombres, apellidos, telefono } = req.body;
+  try {
+    const [resultado] = await db.query(
+      'UPDATE cliente SET nombres = ?, apellidos = ?, telefono = ? WHERE idCliente = ?',
+      [nombres, apellidos, telefono, req.cliente.idCliente]
+    );
+    if (!resultado.affectedRows) return res.status(404).json({ mensaje: 'No se encontró tu perfil.' });
+    res.json({ nombres, apellidos, telefono, mensaje: 'Perfil actualizado.' });
+  } catch (error) {
+    console.error('Error al guardar perfil:', error.code);
+    res.status(500).json({ mensaje: 'No se pudo actualizar tu perfil.' });
   }
 });
 

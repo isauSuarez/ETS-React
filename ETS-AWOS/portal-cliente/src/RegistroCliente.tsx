@@ -35,8 +35,8 @@ function RegistroCliente() {
   }
 
   return (
-    <section className="mt-5">
-      <h2>Crear cuenta</h2>
+    <section className="mt-4">
+      <h2 className="h4 mb-3">Crea tu cuenta</h2>
 
       <form className="row g-3" onSubmit={registrar}>
         <div className="col-md-6">
@@ -70,7 +70,7 @@ function RegistroCliente() {
         </div>
 
         <div className="col-12">
-          <button type="submit" className="btn btn-primary" disabled={guardando}>
+          <button type="submit" className="btn btn-success" disabled={guardando}>
             {guardando ? 'Creando cuenta…' : 'Crear cuenta'}
           </button>
         </div>

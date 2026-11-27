@@ -1,15 +1,10 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-import RegistroCliente from './RegistroCliente';
 import SesionCliente from './SesionCliente';
+import { apiCliente } from './clienteApi';
+import type { Plan } from './clienteApi';
+import './App.css';
 
-interface Plan {
-  idPlan: number;
-  nombre: string;
-  maxConsultas: number;
-  maxRemotos: number;
-  maxPresenciales: number;
-}
+const iconosPlanes = ['bi-shield', 'bi-shield-check', 'bi-buildings'];
 
 function App() {
   const [planes, setPlanes] = useState<Plan[]>([]);
@@ -17,45 +12,40 @@ function App() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    axios.get<Plan[]>('http://localhost:3000/api/planes')
-      .then((respuesta) => {
-        setPlanes(respuesta.data);
-      })
-      .catch(() => {
-        setError('No se pudieron cargar los planes.');
-      })
-      .finally(() => {
-        setCargando(false);
-      });
+    apiCliente.get<Plan[]>('/planes')
+      .then(({ data }) => setPlanes(data))
+      .catch(() => setError('No se pudieron cargar los planes.'))
+      .finally(() => setCargando(false));
   }, []);
 
   return (
-    <main className="container py-5">
-      <h1>Planes de soporte técnico</h1>
-      <p>Las pólizas tienen vigencia anual y los cupos se renuevan cada mes.</p>
-
-      {cargando && <p>Cargando planes…</p>}
-      {error && <p className="alert alert-danger" role="alert">{error}</p>}
-
-      <div className="row g-3">
-        {planes.map((plan) => (
-          <div className="col-12 col-md-4" key={plan.idPlan}>
-            <section className="card h-100">
-              <div className="card-body">
-                <h2 className="h4">{plan.nombre}</h2>
-                <ul className="mb-0">
-                  <li>{plan.maxConsultas} consultas al mes</li>
-                  <li>{plan.maxRemotos} servicios remotos al mes</li>
-                  <li>{plan.maxPresenciales} visitas presenciales al mes</li>
+    <SesionCliente planes={planes}>
+      <section className="container py-4 py-lg-5" id="planes">
+        <div className="mb-4">
+          <h2 className="ets-titulo h3 mb-2">Planes de soporte técnico</h2>
+          <p className="text-secondary mb-0">Vigencia anual, con eventos que se renuevan cada mes.</p>
+        </div>
+        {cargando && <p role="status">Cargando planes…</p>}
+        {error && <p className="alert alert-warning" role="alert">{error}</p>}
+        <div className="row g-3">
+          {planes.map((plan, index) => (
+            <div className="col-md-4" key={plan.idPlan}>
+              <article className="ets-card p-4 h-100">
+                <div className="d-flex gap-3 align-items-center mb-3">
+                  <span className="ets-icon"><i className={'bi ' + (iconosPlanes[index] ?? 'bi-shield')} aria-hidden="true" /></span>
+                  <h3 className="h5 mb-0">{plan.nombre}</h3>
+                </div>
+                <ul className="list-unstyled ets-plan-cupos mb-0">
+                  <li><span>Consultas</span><strong>{plan.maxConsultas}</strong></li>
+                  <li><span>Servicios remotos</span><strong>{plan.maxRemotos}</strong></li>
+                  <li><span>Visitas presenciales</span><strong>{plan.maxPresenciales}</strong></li>
                 </ul>
-              </div>
-            </section>
-          </div>
-        ))}
-      </div>
-      <SesionCliente />
-      <RegistroCliente />
-    </main>
+              </article>
+            </div>
+          ))}
+        </div>
+      </section>
+    </SesionCliente>
   );
 }
 

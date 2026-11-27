@@ -1,184 +1,320 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
+:root {
+  --ets-fondo: #edf6f1;
+  --ets-texto: #17352c;
+  --ets-verde: #115d45;
+  --ets-borde: #d8e9e0;
 }
 
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
+body {
+  min-height: 100vh;
+  color: var(--ets-texto);
+  background:
+    radial-gradient(ellipse at 6% 1%, #cceee0 0, transparent 34rem),
+    radial-gradient(ellipse at 98% 88%, #d7eee1 0, transparent 34rem),
+    var(--ets-fondo);
 }
 
-#center {
+#root {
+  min-height: 100vh;
+}
+
+.ets-header {
+  background: rgb(255 255 255 / 92%);
+  border-bottom: 1px solid var(--ets-borde);
+  backdrop-filter: blur(14px);
+}
+
+.ets-nav {
   display: flex;
-  flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem 1.4rem;
+  padding-top: .8rem;
+  padding-bottom: .8rem;
 }
 
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
+.ets-marca {
+  color: #18352c;
+  font-size: .98rem;
+  text-align: start;
+  line-height: 1.2;
 }
 
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
+.ets-marca img {
+  object-fit: contain;
 }
 
-#next-steps ul {
-  list-style: none;
+.ets-marca small {
+  display: block;
+  color: #4c655d;
+  margin-top: .15rem;
+}
+
+.ets-marca-btn,
+.ets-nav-link {
+  border: 0;
+  background: none;
+  color: var(--ets-verde);
+}
+
+.ets-marca-btn {
   padding: 0;
+}
+
+.ets-nav-menu {
   display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
+  flex-wrap: wrap;
+  gap: .2rem;
 }
 
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
+.ets-nav-link {
+  border-radius: .55rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .48rem .65rem;
+  font-size: .92rem;
+  font-weight: 600;
+  text-decoration: none;
 }
 
-.ticks {
+.ets-nav-link:hover,
+.ets-nav-link[aria-current] {
+  background: #e4f4eb;
+}
+
+.ets-card {
+  background: rgb(255 255 255 / 94%);
+  border: 1px solid var(--ets-borde);
+  border-radius: 1.15rem;
+  box-shadow: 0 .3rem 1.1rem rgb(26 81 60 / 6%);
+  min-width: 0;
+}
+
+.ets-titulo {
+  font-weight: 750;
+  letter-spacing: -.025em;
+}
+
+.ets-acceso-hero,
+.ets-panel-hero {
+  color: #fff;
+  background: linear-gradient(135deg, #104636 4%, #0b6549 59%, #138265);
+  border-radius: 1.3rem;
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  box-shadow: 0 1rem 2rem rgb(17 93 69 / 12%);
+}
+
+.ets-acceso-hero::after,
+.ets-panel-hero::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  right: -5rem;
+  bottom: -10rem;
+  width: 22rem;
+  height: 22rem;
+  border-radius: 50%;
+  border: 3rem solid rgb(197 250 219 / 10%);
+  box-shadow: 0 0 0 2.5rem rgb(197 250 219 / 6%);
+}
+
+.ets-acceso-hero {
+  min-height: 23rem;
+  padding: clamp(1.5rem, 4vw, 3.2rem);
+}
+
+.ets-acceso-hero h1,
+.ets-panel-hero h1 {
+  font-size: clamp(2rem, 3.9vw, 3.45rem);
+  font-weight: 760;
+  line-height: 1.06;
+  letter-spacing: -.038em;
+  overflow-wrap: anywhere;
+}
+
+.ets-acceso-hero p,
+.ets-panel-hero p {
+  color: #d6f0e4;
+  font-size: 1.05rem;
+  max-width: 32rem;
+  margin-top: .9rem;
+}
+
+.ets-servicios span {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  border: 1px solid rgb(255 255 255 / 26%);
+  background: rgb(255 255 255 / 10%);
+  border-radius: 2rem;
+  padding: .45rem .7rem;
+  font-size: .84rem;
+}
+
+.ets-acceso {
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.ets-switch {
+  display: flex;
+  gap: .3rem;
+  border-radius: .7rem;
+  padding: .25rem;
+  background: #edf5f0;
+}
+
+.ets-switch button {
+  flex: 1;
+  border: 0;
+  border-radius: .5rem;
+  padding: .5rem .3rem;
+  color: var(--ets-verde);
+  background: transparent;
+  font-size: .9rem;
+  font-weight: 650;
+}
+
+.ets-switch button[aria-pressed="true"] {
+  background: #fff;
+  box-shadow: 0 1px 4px rgb(24 53 44 / 12%);
+}
+
+.ets-panel-hero {
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ets-panel-hero p {
+  margin-bottom: 0;
+}
+
+.ets-icon {
+  flex: 0 0 2.65rem;
+  width: 2.65rem;
+  height: 2.65rem;
+  border-radius: .7rem;
+  display: inline-grid;
+  place-items: center;
+  background: #e1f3e9;
+  color: var(--ets-verde);
+  font-size: 1.18rem;
+}
+
+.ets-resumen-card {
+  display: flex;
   width: 100%;
+  height: 100%;
+  gap: .85rem;
+  align-items: center;
+  padding: 1.15rem;
+  text-align: left;
+  color: var(--ets-texto);
+}
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
+.ets-resumen-card:hover {
+  border-color: #8bc3ab;
+}
+
+.ets-resumen-card strong,
+.ets-resumen-card strong + span {
+  display: block;
+}
+
+.ets-resumen-card strong {
+  line-height: 1.1;
+  font-size: 1.55rem;
+}
+
+.ets-resumen-card strong + span {
+  color: #4d665d;
+  margin-top: .15rem;
+}
+
+.ets-section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .8rem;
+}
+
+.ets-plan-cupos li {
+  display: flex;
+  justify-content: space-between;
+  gap: .7rem;
+  align-items: center;
+  border-top: 1px solid #edf3ef;
+  padding: .48rem 0;
+}
+
+.ets-tag {
+  border-radius: 2rem;
+  color: #325748;
+  background: #e7f3ed;
+  font-size: .79rem;
+  padding: .34rem .62rem;
+  font-weight: 650;
+  display: inline-block;
+}
+
+.ets-tag-PENDIENTE,
+.ets-tag-PENDIENTE_APROBACION {
+  background: #fff1cb;
+  color: #614508;
+}
+
+.ets-tag-CANCELADA,
+.ets-tag-CANCELADO,
+.ets-tag-VENCIDA {
+  background: #edf0ef;
+  color: #4a5852;
+}
+
+.ets-wrap {
+  overflow-wrap: anywhere;
+}
+
+.ets-descripcion {
+  white-space: pre-wrap;
+}
+
+.ets-imagen-ticket {
+  max-height: 20rem;
+  object-fit: contain;
+  background: #edf4ef;
+}
+
+.ets-card .form-control:focus,
+.ets-card .form-select:focus {
+  border-color: #469777;
+  box-shadow: 0 0 0 .2rem rgb(25 135 84 / 16%);
+}
+
+@media (max-width: 991px) {
+  .ets-nav-menu {
+    order: 3;
+    width: 100%;
   }
 
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
+  .ets-nav {
+    flex-wrap: wrap;
   }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
+}
+
+@media (max-width: 575px) {
+  .ets-nav-link {
+    font-size: .81rem;
+    padding-inline: .45rem;
+  }
+
+  .ets-acceso-hero {
+    min-height: 17rem;
   }
 }

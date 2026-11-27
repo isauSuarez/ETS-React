@@ -10,6 +10,10 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var planesRouter = require('./routes/planes');
 var clientesRouter = require('./routes/clientes');
+var polizasRouter = require('./routes/polizas');
+var ticketsRouter = require('./routes/tickets');
+var empleadosRouter = require('./routes/empleados');
+var polizasAdminRouter = require('./routes/polizasAdmin');
 
 var app = express();
 
@@ -24,7 +28,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: ['http://localhost:5173', 'http://localhost:5174'],
   credentials: true
 }));
 
@@ -32,6 +36,10 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api/planes', planesRouter);
 app.use('/api/clientes', clientesRouter);
+app.use('/api/polizas', polizasRouter);
+app.use('/api/tickets', ticketsRouter);
+app.use('/api/empleados', empleadosRouter);
+app.use('/api/admin/polizas', polizasAdminRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
